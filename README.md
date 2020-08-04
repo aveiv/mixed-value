@@ -1,4 +1,4 @@
-ArrayReader provides easy access to array and the ability to convert/cast it's values.
+ArrayReader provides easy access to array and the ability to convert/cast its values.
 
 ## Installation
 
