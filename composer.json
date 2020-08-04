@@ -1,0 +1,33 @@
+{
+    "name": "aveiv/array-reader",
+    "description": "ArrayReader provides easy access to array and the ability to convert/cast it's values.",
+    "type": "library",
+    "keywords": ["array", "convert", "cast", "type"],
+    "homepage": "https://github.com/aveiv/array-reader",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexandr Veliko-Ivanenko",
+            "email": "velivalex@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "infection/infection": "^0.16",
+        "phpunit/phpunit": "^9.2",
+        "vimeo/psalm": "^3.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aveiv\\ArrayReader\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aveiv\\ArrayReader\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+/.idea/
+/build/
+/composer.lock
+/infection.json
+/phpunit.xml
+/psalm.xml
+/vendor/
