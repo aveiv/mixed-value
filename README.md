@@ -33,6 +33,8 @@ $reader = new ArrayReader([
     'birthdate' => '1990-01-01',
     'balance' => '999.99',
     'isActive' => 1,
+    
+    'array_data' => [],
 ]);
 
 $reader['id']->toInt()->getValue(); // returns 99
