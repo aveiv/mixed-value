@@ -154,7 +154,11 @@ final class ArrayReader implements \ArrayAccess
         return is_array($this->value) && isset($this->value[$offset]);
     }
 
-    public function offsetGet($offset)
+    /**
+     * @param mixed $offset
+     * @return self
+     */
+    public function offsetGet($offset): self
     {
         $offset = $this->prepareOffset($offset);
         $value = null;
