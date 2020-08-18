@@ -15,6 +15,81 @@ use PHPUnit\Framework\TestCase;
 
 class ArrayReaderTest extends TestCase
 {
+    public function testIsArray_Array_ReturnsSame(): void
+    {
+        $reader = new ArrayReader($value = []);
+        $this->assertSame($value, $reader->isArray()->getValue());
+    }
+
+    public function testIsArray_NotArray_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be an array"');
+
+        $reader = new ArrayReader($value = 'not_array');
+        $reader->isArray();
+    }
+
+    public function testIsBool_Bool_ReturnsSame(): void
+    {
+        $reader = new ArrayReader($value = true);
+        $this->assertSame($value, $reader->isBool()->getValue());
+    }
+
+    public function testIsBool_NotBool_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be a boolean"');
+
+        $reader = new ArrayReader($value = 'not_bool');
+        $reader->isBool();
+    }
+
+    public function testIsFloat_Float_ReturnsSame(): void
+    {
+        $reader = new ArrayReader($value = 1.0);
+        $this->assertSame($value, $reader->isFloat()->getValue());
+    }
+
+    public function testIsFloat_NotFloat_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be a float"');
+
+        $reader = new ArrayReader($value = 'not_float');
+        $reader->isFloat();
+    }
+
+    public function testIsInt_Int_ReturnsSame(): void
+    {
+        $reader = new ArrayReader($value = 1);
+        $this->assertSame($value, $reader->isInt()->getValue());
+    }
+
+    public function testIsInt_NotInt_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be an int"');
+
+        $reader = new ArrayReader($value = 'not_int');
+        $reader->isInt();
+    }
+
+    public function testIsString_String_ReturnsSame(): void
+    {
+        $reader = new ArrayReader($value = 'string');
+        $this->assertSame($value, $reader->isString()->getValue());
+    }
+
+    public function testIsString_NotString_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be a string"');
+
+        $reader = new ArrayReader($value = 1);
+        $reader->isString();
+    }
+
     public function provideCastableBools(): array
     {
         return [
@@ -225,6 +300,7 @@ class ArrayReaderTest extends TestCase
                 throw new UnexpectedValueException('Uncastable value');
             }
         });
+        /** @noinspection PhpUndefinedMethodInspection */
         $reader['path']['to']->toAny();
     }
 

@@ -9,6 +9,11 @@ use Aveiv\ArrayReader\Converter\ConverterInterface;
 use Aveiv\ArrayReader\Converter\DateTimeConverter;
 use Aveiv\ArrayReader\Converter\FloatConverter;
 use Aveiv\ArrayReader\Converter\IntConverter;
+use Aveiv\ArrayReader\Converter\IsArrayConverter;
+use Aveiv\ArrayReader\Converter\IsBoolConverter;
+use Aveiv\ArrayReader\Converter\IsFloatConverter;
+use Aveiv\ArrayReader\Converter\IsIntConverter;
+use Aveiv\ArrayReader\Converter\IsStringConverter;
 use Aveiv\ArrayReader\Converter\StringConverter;
 use Aveiv\ArrayReader\Exception\MissingValueException;
 use Aveiv\ArrayReader\Exception\ReadOnlyException;
@@ -47,6 +52,12 @@ final class ArrayReader implements \ArrayAccess
     {
         $this->value = $value;
 
+        $this->registerConverter('isArray', new IsArrayConverter());
+        $this->registerConverter('isBool', new IsBoolConverter());
+        $this->registerConverter('isFloat', new IsFloatConverter());
+        $this->registerConverter('isInt', new IsIntConverter());
+        $this->registerConverter('isString', new IsStringConverter());
+
         $this->registerConverter('toBool', new BoolConverter());
         $this->registerConverter('toDateTime', new DateTimeConverter());
         $this->registerConverter('toFloat', new FloatConverter());
@@ -57,6 +68,56 @@ final class ArrayReader implements \ArrayAccess
     public function registerConverter(string $key, ConverterInterface $converter): void
     {
         $this->converters[mb_strtolower($key)] = $converter;
+    }
+
+    /**
+     * @psalm-return self<array>
+     *
+     * @return self
+     */
+    public function isArray(): self
+    {
+        return $this->to('isArray');
+    }
+
+    /**
+     * @psalm-return self<bool>
+     *
+     * @return self
+     */
+    public function isBool(): self
+    {
+        return $this->to('isBool');
+    }
+
+    /**
+     * @psalm-return self<float>
+     *
+     * @return self
+     */
+    public function isFloat(): self
+    {
+        return $this->to('isFloat');
+    }
+
+    /**
+     * @psalm-return self<int>
+     *
+     * @return self
+     */
+    public function isInt(): self
+    {
+        return $this->to('isInt');
+    }
+
+    /**
+     * @psalm-return self<string>
+     *
+     * @return self
+     */
+    public function isString(): self
+    {
+        return $this->to('isString');
     }
 
     /**
