@@ -304,6 +304,44 @@ class ArrayReaderTest extends TestCase
         $reader['path']['to']->toAny();
     }
 
+    public function testMap_MixedArrayItemToInt_ReturnsIntArray(): void
+    {
+        $reader = new ArrayReader([1, '2', 3]);
+        $intArr = $reader
+            ->map(fn(ArrayReader $r) => $r->toInt()->getValue())
+            ->getValue();
+        $this->assertSame([1, 2, 3], $intArr);
+    }
+
+    public function testMap_NotArray_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value: "Value must be an array"');
+
+        $reader = new ArrayReader('not_array');
+        $reader->map(fn(ArrayReader $r) => $r->getValue());
+    }
+
+    public function testMap_GetItemValueOfArrayWithNull_ThrowsMissingValueException(): void
+    {
+        $this->expectException(MissingValueException::class);
+        $this->expectExceptionMessage('Value "1" does not exists');
+
+        $reader = new ArrayReader([1, null, 3]);
+        $reader
+            ->map(fn(ArrayReader $r) => $r->getValue());
+    }
+
+    public function testMap_MixedArrayItemIsInt_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot convert value "1": "Value must be an int"');
+
+        $reader = new ArrayReader([1, '2', 3]);
+        $reader
+            ->map(fn(ArrayReader $r) => $r->isInt()->getValue());
+    }
+
     public function provideInvalidOffsets(): array
     {
         return [

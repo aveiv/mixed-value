@@ -22,12 +22,12 @@ use Aveiv\ArrayReader\Exception\UnexpectedOffsetTypeException;
 use Aveiv\ArrayReader\Exception\UnexpectedValueException;
 
 /**
- * @psalm-template T
+ * @psalm-template TValue
  */
 final class ArrayReader implements \ArrayAccess
 {
     /**
-     * @psalm-var T
+     * @psalm-var TValue
      *
      * @var mixed
      */
@@ -44,7 +44,7 @@ final class ArrayReader implements \ArrayAccess
     private array $converters = [];
 
     /**
-     * @psalm-param T $value
+     * @psalm-param TValue $value
      *
      * @param mixed $value
      */
@@ -171,6 +171,24 @@ final class ArrayReader implements \ArrayAccess
     }
 
     /**
+     * @param callable $cb
+     * @return self
+     *
+     * @psalm-template T
+     * @psalm-param callable(self):T $cb
+     * @psalm-return self<array<T>>
+     */
+    public function map(callable $cb): self
+    {
+        $arr = $this->isArray()->getValue();
+        $arr = array_map(function ($k, $v) use ($cb) {
+            $vReader = $this->newStatic($v, strval($k));
+            return $cb($vReader);
+        }, array_keys($arr), $arr);
+        return $this->newStatic($arr);
+    }
+
+    /**
      * @param string $name
      * @param array $arguments
      * @return self
@@ -253,7 +271,7 @@ final class ArrayReader implements \ArrayAccess
     }
 
     /**
-     * @psalm-return T
+     * @psalm-return TValue
      *
      * @return mixed
      */
@@ -266,7 +284,7 @@ final class ArrayReader implements \ArrayAccess
     }
 
     /**
-     * @psalm-return T|null
+     * @psalm-return TValue|null
      *
      * @return mixed|null
      */
