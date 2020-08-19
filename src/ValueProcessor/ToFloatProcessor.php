@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Converter;
+namespace Aveiv\ArrayReader\ValueProcessor;
 
 use Aveiv\ArrayReader\Exception\UnexpectedValueException;
 
-final class IntConverter implements ConverterInterface
+final class ToFloatProcessor implements ValueProcessorInterface
 {
     public function __invoke($value)
     {
         if (is_object($value)) {
             throw new UnexpectedValueException('Value cannot be an object');
         }
-        return intval($value);
+        return floatval($value);
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Converter;
+namespace Aveiv\ArrayReader\ValueProcessor;
 
 use Aveiv\ArrayReader\Exception\UnexpectedValueException;
 
-final class StringConverter implements ConverterInterface
+final class ToStringProcessor implements ValueProcessorInterface
 {
     public function __invoke($value)
     {

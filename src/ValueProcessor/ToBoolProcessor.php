@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Converter;
+namespace Aveiv\ArrayReader\ValueProcessor;
 
-final class BoolConverter implements ConverterInterface
+final class ToBoolProcessor implements ValueProcessorInterface
 {
     public function __invoke($value)
     {

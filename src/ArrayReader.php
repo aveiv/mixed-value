@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Aveiv\ArrayReader;
 
-use Aveiv\ArrayReader\Converter\BoolConverter;
-use Aveiv\ArrayReader\Converter\ConverterInterface;
-use Aveiv\ArrayReader\Converter\DateTimeConverter;
-use Aveiv\ArrayReader\Converter\FloatConverter;
-use Aveiv\ArrayReader\Converter\IntConverter;
-use Aveiv\ArrayReader\Converter\IsArrayConverter;
-use Aveiv\ArrayReader\Converter\IsBoolConverter;
-use Aveiv\ArrayReader\Converter\IsFloatConverter;
-use Aveiv\ArrayReader\Converter\IsIntConverter;
-use Aveiv\ArrayReader\Converter\IsStringConverter;
-use Aveiv\ArrayReader\Converter\StringConverter;
+use Aveiv\ArrayReader\ValueProcessor\ToBoolProcessor;
+use Aveiv\ArrayReader\ValueProcessor\ValueProcessorInterface;
+use Aveiv\ArrayReader\ValueProcessor\ToDateTimeProcessor;
+use Aveiv\ArrayReader\ValueProcessor\ToFloatProcessor;
+use Aveiv\ArrayReader\ValueProcessor\ToIntProcessor;
+use Aveiv\ArrayReader\ValueProcessor\IsArrayProcessor;
+use Aveiv\ArrayReader\ValueProcessor\IsBoolProcessor;
+use Aveiv\ArrayReader\ValueProcessor\IsFloatProcessor;
+use Aveiv\ArrayReader\ValueProcessor\IsIntProcessor;
+use Aveiv\ArrayReader\ValueProcessor\IsStringProcessor;
+use Aveiv\ArrayReader\ValueProcessor\ToStringProcessor;
 use Aveiv\ArrayReader\Exception\MissingValueException;
 use Aveiv\ArrayReader\Exception\ReadOnlyException;
 use Aveiv\ArrayReader\Exception\UndefinedMethodException;
@@ -39,9 +39,9 @@ final class ArrayReader implements \ArrayAccess
     private array $path = [];
 
     /**
-     * @var ConverterInterface[]
+     * @var ValueProcessorInterface[]
      */
-    private array $converters = [];
+    private array $valueProcessors = [];
 
     /**
      * @psalm-param TValue $value
@@ -52,22 +52,22 @@ final class ArrayReader implements \ArrayAccess
     {
         $this->value = $value;
 
-        $this->registerConverter('isArray', new IsArrayConverter());
-        $this->registerConverter('isBool', new IsBoolConverter());
-        $this->registerConverter('isFloat', new IsFloatConverter());
-        $this->registerConverter('isInt', new IsIntConverter());
-        $this->registerConverter('isString', new IsStringConverter());
+        $this->registerValueProcessor('isArray', new IsArrayProcessor());
+        $this->registerValueProcessor('isBool', new IsBoolProcessor());
+        $this->registerValueProcessor('isFloat', new IsFloatProcessor());
+        $this->registerValueProcessor('isInt', new IsIntProcessor());
+        $this->registerValueProcessor('isString', new IsStringProcessor());
 
-        $this->registerConverter('toBool', new BoolConverter());
-        $this->registerConverter('toDateTime', new DateTimeConverter());
-        $this->registerConverter('toFloat', new FloatConverter());
-        $this->registerConverter('toInt', new IntConverter());
-        $this->registerConverter('toString', new StringConverter());
+        $this->registerValueProcessor('toBool', new ToBoolProcessor());
+        $this->registerValueProcessor('toDateTime', new ToDateTimeProcessor());
+        $this->registerValueProcessor('toFloat', new ToFloatProcessor());
+        $this->registerValueProcessor('toInt', new ToIntProcessor());
+        $this->registerValueProcessor('toString', new ToStringProcessor());
     }
 
-    public function registerConverter(string $key, ConverterInterface $converter): void
+    public function registerValueProcessor(string $key, ValueProcessorInterface $processor): void
     {
-        $this->converters[mb_strtolower($key)] = $converter;
+        $this->valueProcessors[mb_strtolower($key)] = $processor;
     }
 
     /**
@@ -199,31 +199,31 @@ final class ArrayReader implements \ArrayAccess
      */
     public function __call(string $name, array $arguments): self
     {
-        $converterKey = mb_strtolower($name);
+        $processorKey = mb_strtolower($name);
 
-        if (!isset($this->converters[$converterKey])) {
+        if (!isset($this->valueProcessors[$processorKey])) {
             throw new UndefinedMethodException(get_class($this), $name);
         }
 
-        return $this->to($converterKey);
+        return $this->to($processorKey);
     }
 
     /**
-     * @param string $converterKey
+     * @param string $processorKey
      * @return self
      */
-    private function to(string $converterKey): self
+    private function to(string $processorKey): self
     {
-        $converterKey = mb_strtolower($converterKey);
+        $processorKey = mb_strtolower($processorKey);
         $value = $this->value;
         if ($this->hasValue()) {
             try {
-                $value = $this->converters[$converterKey]($this->value);
+                $value = $this->valueProcessors[$processorKey]($this->value);
             } catch (UnexpectedValueException $e) {
                 if ($pathAsStr = $this->pathAsStr()) {
-                    $msg = sprintf('Cannot convert value "%s": "%s"', $this->pathAsStr(), $e->getMessage());
+                    $msg = sprintf('Cannot process value "%s": "%s"', $this->pathAsStr(), $e->getMessage());
                 } else {
-                    $msg = sprintf('Cannot convert value: "%s"', $e->getMessage());
+                    $msg = sprintf('Cannot process value: "%s"', $e->getMessage());
                 }
                 throw new UnexpectedValueException($msg, intval($e->getCode()), $e);
             }
@@ -319,7 +319,7 @@ final class ArrayReader implements \ArrayAccess
         if ($addPath) {
             $reader->path[] = $addPath;
         }
-        $reader->converters = $this->converters;
+        $reader->valueProcessors = $this->valueProcessors;
         return $reader;
     }
 }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Converter;
+namespace Aveiv\ArrayReader\ValueProcessor;
 
-interface ConverterInterface
+interface ValueProcessorInterface
 {
     /**
      * @param mixed $value

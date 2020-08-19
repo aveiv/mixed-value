@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aveiv\ArrayReader\Tests;
 
 use Aveiv\ArrayReader\ArrayReader;
-use Aveiv\ArrayReader\Converter\ConverterInterface;
+use Aveiv\ArrayReader\ValueProcessor\ValueProcessorInterface;
 use Aveiv\ArrayReader\Exception\MissingValueException;
 use Aveiv\ArrayReader\Exception\ReadOnlyException;
 use Aveiv\ArrayReader\Exception\UndefinedMethodException;
@@ -24,7 +24,7 @@ class ArrayReaderTest extends TestCase
     public function testIsArray_NotArray_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be an array"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be an array"');
 
         $reader = new ArrayReader($value = 'not_array');
         $reader->isArray();
@@ -39,7 +39,7 @@ class ArrayReaderTest extends TestCase
     public function testIsBool_NotBool_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be a boolean"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be a boolean"');
 
         $reader = new ArrayReader($value = 'not_bool');
         $reader->isBool();
@@ -54,7 +54,7 @@ class ArrayReaderTest extends TestCase
     public function testIsFloat_NotFloat_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be a float"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be a float"');
 
         $reader = new ArrayReader($value = 'not_float');
         $reader->isFloat();
@@ -69,7 +69,7 @@ class ArrayReaderTest extends TestCase
     public function testIsInt_NotInt_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be an int"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be an int"');
 
         $reader = new ArrayReader($value = 'not_int');
         $reader->isInt();
@@ -84,7 +84,7 @@ class ArrayReaderTest extends TestCase
     public function testIsString_NotString_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be a string"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be a string"');
 
         $reader = new ArrayReader($value = 1);
         $reader->isString();
@@ -136,7 +136,7 @@ class ArrayReaderTest extends TestCase
     public function testToDateTime_NotString_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be a string"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be a string"');
 
         $reader = new ArrayReader(9999);
         $reader->toDateTime();
@@ -145,7 +145,7 @@ class ArrayReaderTest extends TestCase
     public function testToDateTime_NotDateTimeString_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Failed to parse datetime string"');
+        $this->expectExceptionMessage('Cannot process value: "Failed to parse datetime string"');
 
         $reader = new ArrayReader('not_datetime_string');
         $reader->toDateTime();
@@ -184,7 +184,7 @@ class ArrayReaderTest extends TestCase
     public function testToFloat_Object_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value cannot be an object"');
+        $this->expectExceptionMessage('Cannot process value: "Value cannot be an object"');
 
         $reader = new ArrayReader(new \stdClass());
         $reader->toFloat();
@@ -224,7 +224,7 @@ class ArrayReaderTest extends TestCase
     public function testToInt_Object_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value cannot be an object"');
+        $this->expectExceptionMessage('Cannot process value: "Value cannot be an object"');
 
         $reader = new ArrayReader(new \stdClass());
         $reader->toInt();
@@ -269,7 +269,7 @@ class ArrayReaderTest extends TestCase
     public function testToString_Array_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value cannot be an array"');
+        $this->expectExceptionMessage('Cannot process value: "Value cannot be an array"');
 
         $reader = new ArrayReader([]);
         $reader->toString();
@@ -278,7 +278,7 @@ class ArrayReaderTest extends TestCase
     public function testToString_ObjectWithoutToString_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must implement the __toString method"');
+        $this->expectExceptionMessage('Cannot process value: "Value must implement the __toString method"');
 
         $reader = new ArrayReader(new \stdClass());
         $reader->toString();
@@ -287,14 +287,14 @@ class ArrayReaderTest extends TestCase
     public function testToAny_UncastableValueWithOffset_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value "path.to": "Uncastable value"');
+        $this->expectExceptionMessage('Cannot process value "path.to": "Uncastable value"');
 
         $reader = new ArrayReader([
             'path' => [
                 'to' => 'value',
             ]
         ]);
-        $reader->registerConverter('toAny', new class implements ConverterInterface {
+        $reader->registerValueProcessor('toAny', new class implements ValueProcessorInterface {
             public function __invoke($value)
             {
                 throw new UnexpectedValueException('Uncastable value');
@@ -326,7 +326,7 @@ class ArrayReaderTest extends TestCase
     public function testMap_NotArray_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value: "Value must be an array"');
+        $this->expectExceptionMessage('Cannot process value: "Value must be an array"');
 
         $reader = new ArrayReader('not_array');
         $reader->map(fn(ArrayReader $r) => $r->getValue());
@@ -345,7 +345,7 @@ class ArrayReaderTest extends TestCase
     public function testMap_MixedArrayItemIsInt_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Cannot convert value "1": "Value must be an int"');
+        $this->expectExceptionMessage('Cannot process value "1": "Value must be an int"');
 
         $reader = new ArrayReader([1, '2', 3]);
         $reader
@@ -484,7 +484,7 @@ class ArrayReaderTest extends TestCase
         $this->assertNull($reader['path']['to']->findValue());
     }
 
-    public function testCall_NonExistingConverter_ThrowsUndefinedMethodException(): void
+    public function testCall_NonExistingProcessor_ThrowsUndefinedMethodException(): void
     {
         $this->expectException(UndefinedMethodException::class);
         $this->expectExceptionMessage('Call to undefined method Aveiv\ArrayReader\ArrayReader::toCustomType()');
@@ -494,10 +494,10 @@ class ArrayReaderTest extends TestCase
         $reader->toCustomType();
     }
 
-    public function testCall_ExistingConverter_ReturnsConvertedValue(): void
+    public function testCall_ExistingProcessor_ReturnsProcessedValue(): void
     {
         $reader = new ArrayReader(10);
-        $reader->registerConverter('toMultipliedValue', new class implements ConverterInterface {
+        $reader->registerValueProcessor('toMultipliedValue', new class implements ValueProcessorInterface {
             public function __invoke($value)
             {
                 return $value * $value;

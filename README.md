@@ -78,10 +78,10 @@ $reader['mixed_arr']
     ->getValue(); // returns [1, 2, 3, 4, 5]
 ```
 
-## Use custom converters
+## Use custom value processors
 
 ```php
-class StripSpacesConverter implements ConverterInterface
+class StripSpacesProcessor implements ValueProcessorInterface
 {
     public function __invoke($value)
     {
@@ -95,7 +95,7 @@ class StripSpacesConverter implements ConverterInterface
 $reader = new ArrayReader([
     'bad_float' => '9 999.99',
 ]);
-$reader->registerConverter('stripSpaces', new StripSpacesConverter());
+$reader->registerValueProcessor('stripSpaces', new StripSpacesProcessor());
 
 $reader['bad_float']->stripSpaces()->toFloat()->getValue(); // return 9999.99
 ```
