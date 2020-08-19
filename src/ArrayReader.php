@@ -180,12 +180,16 @@ final class ArrayReader implements \ArrayAccess
      */
     public function map(callable $cb): self
     {
-        $arr = $this->isArray()->getValue();
-        $arr = array_map(function ($k, $v) use ($cb) {
-            $vReader = $this->newStatic($v, strval($k));
-            return $cb($vReader);
-        }, array_keys($arr), $arr);
-        return $this->newStatic($arr);
+        if ($this->hasValue()) {
+            $arr = $this->isArray()->getValue();
+            $arr = array_map(function ($k, $v) use ($cb) {
+                $vReader = $this->newStatic($v, strval($k));
+                return $cb($vReader);
+            }, array_keys($arr), $arr);
+            return $this->newStatic($arr);
+        } else {
+            return $this;
+        }
     }
 
     /**

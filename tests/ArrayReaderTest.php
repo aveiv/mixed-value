@@ -313,6 +313,16 @@ class ArrayReaderTest extends TestCase
         $this->assertSame([1, 2, 3], $intArr);
     }
 
+    public function testMap_FindValueOnNull_ReturnsNull(): void
+    {
+        $reader = new ArrayReader(null);
+        $this->assertNull(
+            $reader
+                ->map(fn(ArrayReader $r) => $r->getValue())
+                ->findValue()
+        );
+    }
+
     public function testMap_NotArray_ThrowsUnexpectedValueException(): void
     {
         $this->expectException(UnexpectedValueException::class);
