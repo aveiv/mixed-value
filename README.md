@@ -22,6 +22,26 @@ $reader['invalid']['path']->findValue(); // returns null
 $reader['invalid']['path']->findValue() ?? 'default'; // returns "default"
 ```
 
+## Checking value types
+
+```php
+$reader = new ArrayReader([
+    'array_val' => [],
+    'bool_val' => true,
+    'float_val' => 1.0,
+    'int_val' => 1,
+    'str_val' => 'string',
+]);
+
+$reader['array_val']->isArray()->getValue(); // returns []
+$reader['bool_val']->isBool()->getValue(); // returns true
+$reader['float_val']->isFloat()->getValue(); // returns 1.0
+$reader['int_val']->isInt()->getValue(); // returns 1
+$reader['str_val']->isString()->getValue(); // returns "string"
+
+$reader['str_val']->isInt()->getValue(); // throws UnexpectedValueException
+```
+
 ## Converting values
 
 Default converters use PHP casting rules. UnexpectedValueException is thrown if a value cannot be converted.
