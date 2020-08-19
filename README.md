@@ -66,6 +66,18 @@ $reader['isActive']->toBool()->getValue(); // returns true
 $reader['array_data']->toString()->getValue(); // throws UnexpectedValueException
 ```
 
+## Processing array elements
+
+```php
+$reader = new ArrayReader([
+    'mixed_arr' => [1, 2, '3', 4, 5],
+]);
+
+$reader['mixed_arr']
+    ->map(fn(ArrayReader $el) => $el->toInt()->getValue())
+    ->getValue(); // returns [1, 2, 3, 4, 5]
+```
+
 ## Use custom converters
 
 ```php
