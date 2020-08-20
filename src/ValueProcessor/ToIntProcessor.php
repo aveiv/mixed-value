@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\ValueProcessor;
+namespace Aveiv\MixedValue\ValueProcessor;
 
-use Aveiv\ArrayReader\Exception\UnexpectedValueException;
+use Aveiv\MixedValue\Exception\UnexpectedValueException;
 
 final class ToIntProcessor implements ValueProcessorInterface
 {

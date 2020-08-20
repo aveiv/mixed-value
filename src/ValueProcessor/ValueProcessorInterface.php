@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\ValueProcessor;
+namespace Aveiv\MixedValue\ValueProcessor;
 
 interface ValueProcessorInterface
 {

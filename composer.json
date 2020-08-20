@@ -1,9 +1,9 @@
 {
-    "name": "aveiv/array-reader",
-    "description": "ArrayReader provides easy access to array and the ability to convert/cast it's values.",
+    "name": "aveiv/mixed-value",
+    "description": "MixedValue provides easy array access and the ability to convert/cast values",
     "type": "library",
-    "keywords": ["array", "convert", "cast", "type"],
-    "homepage": "https://github.com/aveiv/array-reader",
+    "keywords": ["array", "convert", "cast", "mixed", "type"],
+    "homepage": "https://github.com/aveiv/mixed-value",
     "license": "MIT",
     "authors": [
         {
@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Aveiv\\ArrayReader\\": "src"
+            "Aveiv\\MixedValue\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Aveiv\\ArrayReader\\Tests\\": "tests/"
+            "Aveiv\\MixedValue\\Tests\\": "tests/"
         }
     }
 }

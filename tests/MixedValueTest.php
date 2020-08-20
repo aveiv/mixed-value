@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Tests;
+namespace Aveiv\MixedValue\Tests;
 
-use Aveiv\ArrayReader\ArrayReader;
-use Aveiv\ArrayReader\ValueProcessor\ValueProcessorInterface;
-use Aveiv\ArrayReader\Exception\MissingValueException;
-use Aveiv\ArrayReader\Exception\ReadOnlyException;
-use Aveiv\ArrayReader\Exception\UndefinedMethodException;
-use Aveiv\ArrayReader\Exception\UnexpectedOffsetTypeException;
-use Aveiv\ArrayReader\Exception\UnexpectedValueException;
+use Aveiv\MixedValue\MixedValue;
+use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
+use Aveiv\MixedValue\Exception\MissingValueException;
+use Aveiv\MixedValue\Exception\ReadOnlyException;
+use Aveiv\MixedValue\Exception\UndefinedMethodException;
+use Aveiv\MixedValue\Exception\UnexpectedOffsetTypeException;
+use Aveiv\MixedValue\Exception\UnexpectedValueException;
 use PHPUnit\Framework\TestCase;
 
-class ArrayReaderTest extends TestCase
+class MixedValueTest extends TestCase
 {
     public function testIsArray_Array_ReturnsSame(): void
     {
-        $reader = new ArrayReader($value = []);
-        $this->assertSame($value, $reader->isArray()->getValue());
+        $mixed = new MixedValue($value = []);
+        $this->assertSame($value, $mixed->isArray()->getValue());
     }
 
     public function testIsArray_NotArray_ThrowsUnexpectedValueException(): void
@@ -26,14 +26,14 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be an array"');
 
-        $reader = new ArrayReader($value = 'not_array');
-        $reader->isArray();
+        $mixed = new MixedValue($value = 'not_array');
+        $mixed->isArray();
     }
 
     public function testIsBool_Bool_ReturnsSame(): void
     {
-        $reader = new ArrayReader($value = true);
-        $this->assertSame($value, $reader->isBool()->getValue());
+        $mixed = new MixedValue($value = true);
+        $this->assertSame($value, $mixed->isBool()->getValue());
     }
 
     public function testIsBool_NotBool_ThrowsUnexpectedValueException(): void
@@ -41,14 +41,14 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be a boolean"');
 
-        $reader = new ArrayReader($value = 'not_bool');
-        $reader->isBool();
+        $mixed = new MixedValue($value = 'not_bool');
+        $mixed->isBool();
     }
 
     public function testIsFloat_Float_ReturnsSame(): void
     {
-        $reader = new ArrayReader($value = 1.0);
-        $this->assertSame($value, $reader->isFloat()->getValue());
+        $mixed = new MixedValue($value = 1.0);
+        $this->assertSame($value, $mixed->isFloat()->getValue());
     }
 
     public function testIsFloat_NotFloat_ThrowsUnexpectedValueException(): void
@@ -56,14 +56,14 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be a float"');
 
-        $reader = new ArrayReader($value = 'not_float');
-        $reader->isFloat();
+        $mixed = new MixedValue($value = 'not_float');
+        $mixed->isFloat();
     }
 
     public function testIsInt_Int_ReturnsSame(): void
     {
-        $reader = new ArrayReader($value = 1);
-        $this->assertSame($value, $reader->isInt()->getValue());
+        $mixed = new MixedValue($value = 1);
+        $this->assertSame($value, $mixed->isInt()->getValue());
     }
 
     public function testIsInt_NotInt_ThrowsUnexpectedValueException(): void
@@ -71,14 +71,14 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be an int"');
 
-        $reader = new ArrayReader($value = 'not_int');
-        $reader->isInt();
+        $mixed = new MixedValue($value = 'not_int');
+        $mixed->isInt();
     }
 
     public function testIsString_String_ReturnsSame(): void
     {
-        $reader = new ArrayReader($value = 'string');
-        $this->assertSame($value, $reader->isString()->getValue());
+        $mixed = new MixedValue($value = 'string');
+        $this->assertSame($value, $mixed->isString()->getValue());
     }
 
     public function testIsString_NotString_ThrowsUnexpectedValueException(): void
@@ -86,8 +86,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be a string"');
 
-        $reader = new ArrayReader($value = 1);
-        $reader->isString();
+        $mixed = new MixedValue($value = 1);
+        $mixed->isString();
     }
 
     public function provideCastableBools(): array
@@ -116,20 +116,20 @@ class ArrayReaderTest extends TestCase
      */
     public function testToBool_CastableBool_ReturnsSame($value, bool $result): void
     {
-        $reader = new ArrayReader($value);
-        $this->assertSame($result, $reader->toBool()->getValue());
-        $this->assertSame($result, $reader->toBool()->findValue());
+        $mixed = new MixedValue($value);
+        $this->assertSame($result, $mixed->toBool()->getValue());
+        $this->assertSame($result, $mixed->toBool()->findValue());
     }
 
     public function testToDateTime_DateTimeString_ReturnsEqualDateTime(): void
     {
-        $reader = new ArrayReader($dtStr = '2020-01-01');
+        $mixed = new MixedValue($dtStr = '2020-01-01');
         $dt = date_create($dtStr);
 
-        $this->assertInstanceOf(\DateTime::class, $actValue = $reader->toDateTime()->getValue());
+        $this->assertInstanceOf(\DateTime::class, $actValue = $mixed->toDateTime()->getValue());
         $this->assertEquals($dt, $actValue);
 
-        $this->assertInstanceOf(\DateTime::class, $actValue = $reader->toDateTime()->findValue());
+        $this->assertInstanceOf(\DateTime::class, $actValue = $mixed->toDateTime()->findValue());
         $this->assertEquals($dt, $actValue);
     }
 
@@ -138,8 +138,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be a string"');
 
-        $reader = new ArrayReader(9999);
-        $reader->toDateTime();
+        $mixed = new MixedValue(9999);
+        $mixed->toDateTime();
     }
 
     public function testToDateTime_NotDateTimeString_ThrowsUnexpectedValueException(): void
@@ -147,8 +147,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Failed to parse datetime string"');
 
-        $reader = new ArrayReader('not_datetime_string');
-        $reader->toDateTime();
+        $mixed = new MixedValue('not_datetime_string');
+        $mixed->toDateTime();
     }
 
     public function provideCastableFloats(): array
@@ -176,9 +176,9 @@ class ArrayReaderTest extends TestCase
      */
     public function testToFloat_CastableFloat_ReturnsSame($value, float $result): void
     {
-        $reader = new ArrayReader($value);
-        $this->assertSame($result, $reader->toFloat()->getValue());
-        $this->assertSame($result, $reader->toFloat()->findValue());
+        $mixed = new MixedValue($value);
+        $this->assertSame($result, $mixed->toFloat()->getValue());
+        $this->assertSame($result, $mixed->toFloat()->findValue());
     }
 
     public function testToFloat_Object_ThrowsUnexpectedValueException(): void
@@ -186,8 +186,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value cannot be an object"');
 
-        $reader = new ArrayReader(new \stdClass());
-        $reader->toFloat();
+        $mixed = new MixedValue(new \stdClass());
+        $mixed->toFloat();
     }
 
     public function provideCastableInt(): array
@@ -215,10 +215,10 @@ class ArrayReaderTest extends TestCase
      */
     public function testToInt_CastableInt_ReturnsSame($value, int $result): void
     {
-        $reader = new ArrayReader($value);
+        $mixed = new MixedValue($value);
 
-        $this->assertSame($result, $reader->toInt()->getValue());
-        $this->assertSame($result, $reader->toInt()->findValue());
+        $this->assertSame($result, $mixed->toInt()->getValue());
+        $this->assertSame($result, $mixed->toInt()->findValue());
     }
 
     public function testToInt_Object_ThrowsUnexpectedValueException(): void
@@ -226,8 +226,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value cannot be an object"');
 
-        $reader = new ArrayReader(new \stdClass());
-        $reader->toInt();
+        $mixed = new MixedValue(new \stdClass());
+        $mixed->toInt();
     }
 
     public function provideCastableString(): array
@@ -260,10 +260,10 @@ class ArrayReaderTest extends TestCase
      */
     public function testToString_CastableString_ReturnsSame($value, string $result): void
     {
-        $reader = new ArrayReader($value);
+        $mixed = new MixedValue($value);
 
-        $this->assertSame($result, $reader->toString()->getValue());
-        $this->assertSame($result, $reader->toString()->findValue());
+        $this->assertSame($result, $mixed->toString()->getValue());
+        $this->assertSame($result, $mixed->toString()->findValue());
     }
 
     public function testToString_Array_ThrowsUnexpectedValueException(): void
@@ -271,8 +271,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value cannot be an array"');
 
-        $reader = new ArrayReader([]);
-        $reader->toString();
+        $mixed = new MixedValue([]);
+        $mixed->toString();
     }
 
     public function testToString_ObjectWithoutToString_ThrowsUnexpectedValueException(): void
@@ -280,8 +280,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must implement the __toString method"');
 
-        $reader = new ArrayReader(new \stdClass());
-        $reader->toString();
+        $mixed = new MixedValue(new \stdClass());
+        $mixed->toString();
     }
 
     public function testToAny_UncastableValueWithOffset_ThrowsUnexpectedValueException(): void
@@ -289,36 +289,36 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value "path.to": "Uncastable value"');
 
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             'path' => [
                 'to' => 'value',
             ]
         ]);
-        $reader->registerValueProcessor('toAny', new class implements ValueProcessorInterface {
+        $mixed->registerValueProcessor('toAny', new class implements ValueProcessorInterface {
             public function __invoke($value)
             {
                 throw new UnexpectedValueException('Uncastable value');
             }
         });
         /** @noinspection PhpUndefinedMethodInspection */
-        $reader['path']['to']->toAny();
+        $mixed['path']['to']->toAny();
     }
 
     public function testMap_MixedArrayItemToInt_ReturnsIntArray(): void
     {
-        $reader = new ArrayReader([1, '2', 3]);
-        $intArr = $reader
-            ->map(fn(ArrayReader $r) => $r->toInt()->getValue())
+        $mixed = new MixedValue([1, '2', 3]);
+        $intArr = $mixed
+            ->map(fn(MixedValue $r) => $r->toInt()->getValue())
             ->getValue();
         $this->assertSame([1, 2, 3], $intArr);
     }
 
     public function testMap_FindValueOnNull_ReturnsNull(): void
     {
-        $reader = new ArrayReader(null);
+        $mixed = new MixedValue(null);
         $this->assertNull(
-            $reader
-                ->map(fn(ArrayReader $r) => $r->getValue())
+            $mixed
+                ->map(fn(MixedValue $r) => $r->getValue())
                 ->findValue()
         );
     }
@@ -328,8 +328,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be an array"');
 
-        $reader = new ArrayReader('not_array');
-        $reader->map(fn(ArrayReader $r) => $r->getValue());
+        $mixed = new MixedValue('not_array');
+        $mixed->map(fn(MixedValue $r) => $r->getValue());
     }
 
     public function testMap_GetItemValueOfArrayWithNull_ThrowsMissingValueException(): void
@@ -337,9 +337,9 @@ class ArrayReaderTest extends TestCase
         $this->expectException(MissingValueException::class);
         $this->expectExceptionMessage('Value "1" does not exists');
 
-        $reader = new ArrayReader([1, null, 3]);
-        $reader
-            ->map(fn(ArrayReader $r) => $r->getValue());
+        $mixed = new MixedValue([1, null, 3]);
+        $mixed
+            ->map(fn(MixedValue $r) => $r->getValue());
     }
 
     public function testMap_MixedArrayItemIsInt_ThrowsUnexpectedValueException(): void
@@ -347,9 +347,9 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value "1": "Value must be an int"');
 
-        $reader = new ArrayReader([1, '2', 3]);
-        $reader
-            ->map(fn(ArrayReader $r) => $r->isInt()->getValue());
+        $mixed = new MixedValue([1, '2', 3]);
+        $mixed
+            ->map(fn(MixedValue $r) => $r->isInt()->getValue());
     }
 
     public function provideInvalidOffsets(): array
@@ -373,23 +373,23 @@ class ArrayReaderTest extends TestCase
     {
         $this->expectException(UnexpectedOffsetTypeException::class);
 
-        $reader = new ArrayReader([]);
+        $mixed = new MixedValue([]);
         /** @noinspection PhpExpressionResultUnusedInspection */
-        isset($reader[$invalidOffset]);
+        isset($mixed[$invalidOffset]);
     }
 
     public function testOffsetExists_ExistingOffset_ReturnsTrue(): void
     {
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             ($k = 'key') => 'value',
         ]);
-        $this->assertTrue(isset($reader[$k]));
+        $this->assertTrue(isset($mixed[$k]));
     }
 
     public function testOffsetExists_NonExistingOffset_ReturnsTrue(): void
     {
-        $reader = new ArrayReader([]);
-        $this->assertFalse(isset($reader['key']));
+        $mixed = new MixedValue([]);
+        $this->assertFalse(isset($mixed['key']));
     }
 
     /**
@@ -402,46 +402,46 @@ class ArrayReaderTest extends TestCase
         $this->expectException(UnexpectedOffsetTypeException::class);
         $this->expectExceptionMessage('Offset must be a string or an integer');
 
-        $reader = new ArrayReader([]);
-        $reader[$invalidOffset];
+        $mixed = new MixedValue([]);
+        $mixed[$invalidOffset];
     }
 
-    public function testOffsetGet_AnyOffset_ReturnsArrayReader(): void
+    public function testOffsetGet_AnyOffset_ReturnsMixedValue(): void
     {
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             ($existingKey = 'key') => 'value',
         ]);
-        $this->assertInstanceOf(ArrayReader::class, $reader[$existingKey]);
-        $this->assertInstanceOf(ArrayReader::class, $reader['non_existing_key']);
+        $this->assertInstanceOf(MixedValue::class, $mixed[$existingKey]);
+        $this->assertInstanceOf(MixedValue::class, $mixed['non_existing_key']);
     }
 
     public function testOffsetSet_ThrowsReadOnlyException(): void
     {
         $this->expectException(ReadOnlyException::class);
 
-        $reader = new ArrayReader([]);
-        $reader['key'] = 'value';
+        $mixed = new MixedValue([]);
+        $mixed['key'] = 'value';
     }
 
     public function testOffsetUnset_ThrowsReadOnlyException(): void
     {
         $this->expectException(ReadOnlyException::class);
-        $this->expectExceptionMessage('Aveiv\ArrayReader\ArrayReader is readonly');
+        $this->expectExceptionMessage('Aveiv\MixedValue\MixedValue is readonly');
 
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             ($k = 'key') => 'value',
         ]);
-        unset($reader[$k]);
+        unset($mixed[$k]);
     }
 
     public function testGetValue_ExistingOffset_ReturnsSameValue(): void
     {
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             'path' => [
                 'to' => ($value = 'value'),
             ],
         ]);
-        $this->assertSame($value, $reader['path']['to']->getValue());
+        $this->assertSame($value, $mixed['path']['to']->getValue());
     }
 
     public function testGetValue_NonExistingOffset_ThrowsMissingValueException(): void
@@ -449,8 +449,8 @@ class ArrayReaderTest extends TestCase
         $this->expectException(MissingValueException::class);
         $this->expectExceptionMessage('Value "path.to" does not exists');
 
-        $reader = new ArrayReader([]);
-        $reader['path']['to']->getValue();
+        $mixed = new MixedValue([]);
+        $mixed['path']['to']->getValue();
     }
 
     public function testGetValue_OffsetOnNotArray_ThrowsMissingValueException(): void
@@ -458,52 +458,52 @@ class ArrayReaderTest extends TestCase
         $this->expectException(MissingValueException::class);
         $this->expectExceptionMessage('Value "path.to" does not exists');
 
-        $reader = new ArrayReader(new \stdClass());
-        $reader['path']['to']->getValue();
+        $mixed = new MixedValue(new \stdClass());
+        $mixed['path']['to']->getValue();
     }
 
     public function testFindValue_ExistingOffset_ReturnsSameValue(): void
     {
-        $reader = new ArrayReader([
+        $mixed = new MixedValue([
             'path' => [
                 'to' => ($value = 'value'),
             ],
         ]);
-        $this->assertSame($value, $reader['path']['to']->findValue());
+        $this->assertSame($value, $mixed['path']['to']->findValue());
     }
 
     public function testFindValue_NonExistingOffset_ReturnsNull(): void
     {
-        $reader = new ArrayReader([]);
-        $this->assertNull($reader['path']['to']->findValue());
+        $mixed = new MixedValue([]);
+        $this->assertNull($mixed['path']['to']->findValue());
     }
 
     public function testFindValue_OffsetOnNotArray_ReturnsNull(): void
     {
-        $reader = new ArrayReader([]);
-        $this->assertNull($reader['path']['to']->findValue());
+        $mixed = new MixedValue([]);
+        $this->assertNull($mixed['path']['to']->findValue());
     }
 
     public function testCall_NonExistingProcessor_ThrowsUndefinedMethodException(): void
     {
         $this->expectException(UndefinedMethodException::class);
-        $this->expectExceptionMessage('Call to undefined method Aveiv\ArrayReader\ArrayReader::toCustomType()');
+        $this->expectExceptionMessage('Call to undefined method Aveiv\MixedValue\MixedValue::toCustomType()');
 
-        $reader = new ArrayReader([]);
+        $mixed = new MixedValue([]);
         /** @noinspection PhpUndefinedMethodInspection */
-        $reader->toCustomType();
+        $mixed->toCustomType();
     }
 
     public function testCall_ExistingProcessor_ReturnsProcessedValue(): void
     {
-        $reader = new ArrayReader(10);
-        $reader->registerValueProcessor('toMultipliedValue', new class implements ValueProcessorInterface {
+        $mixed = new MixedValue(10);
+        $mixed->registerValueProcessor('toMultipliedValue', new class implements ValueProcessorInterface {
             public function __invoke($value)
             {
                 return $value * $value;
             }
         });
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertSame(100, $reader->toMultipliedValue()->getValue());
+        $this->assertSame(100, $mixed->toMultipliedValue()->getValue());
     }
 }

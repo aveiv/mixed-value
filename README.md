@@ -1,31 +1,31 @@
-ArrayReader provides easy access to array and the ability to convert/cast its values.
+MixedValue provides easy array access and the ability to convert/cast values.
 
 ## Installation
 
 ```
-composer require aveiv/array-reader
+composer require aveiv/mixed-value
 ```
 
 ## Access to array
 
 ```php
-$reader = new ArrayReader([
+$mixed = new MixedValue([
     'good' => [
         'path' => 'value',
     ]
 ]);
 
-$reader['good']['path']->getValue(); // returns "value"
-$reader['invalid']['path']->getValue(); // throws MissingValueException
+$mixed['good']['path']->getValue(); // returns "value"
+$mixed['invalid']['path']->getValue(); // throws MissingValueException
 
-$reader['invalid']['path']->findValue(); // returns null
-$reader['invalid']['path']->findValue() ?? 'default'; // returns "default"
+$mixed['invalid']['path']->findValue(); // returns null
+$mixed['invalid']['path']->findValue() ?? 'default'; // returns "default"
 ```
 
 ## Checking value types
 
 ```php
-$reader = new ArrayReader([
+$mixed = new MixedValue([
     'array_val' => [],
     'bool_val' => true,
     'float_val' => 1.0,
@@ -33,21 +33,21 @@ $reader = new ArrayReader([
     'str_val' => 'string',
 ]);
 
-$reader['array_val']->isArray()->getValue(); // returns []
-$reader['bool_val']->isBool()->getValue(); // returns true
-$reader['float_val']->isFloat()->getValue(); // returns 1.0
-$reader['int_val']->isInt()->getValue(); // returns 1
-$reader['str_val']->isString()->getValue(); // returns "string"
+$mixed['array_val']->isArray()->getValue(); // returns []
+$mixed['bool_val']->isBool()->getValue(); // returns true
+$mixed['float_val']->isFloat()->getValue(); // returns 1.0
+$mixed['int_val']->isInt()->getValue(); // returns 1
+$mixed['str_val']->isString()->getValue(); // returns "string"
 
-$reader['str_val']->isInt()->getValue(); // throws UnexpectedValueException
+$mixed['str_val']->isInt()->getValue(); // throws UnexpectedValueException
 ```
 
-## Converting values
+## Converting/casting values
 
 Default converters use PHP casting rules. UnexpectedValueException is thrown if a value cannot be converted.
 
 ```php
-$reader = new ArrayReader([
+$mixed = new MixedValue([
     'id' => '99',
     'name' => 'Mary',
     'birthdate' => '1990-01-01',
@@ -57,24 +57,24 @@ $reader = new ArrayReader([
     'array_data' => [],
 ]);
 
-$reader['id']->toInt()->getValue(); // returns 99
-$reader['name']->toString()->getValue(); // returns "Mary"
-$reader['birthdate']->toDateTime()->getValue(); // returns DateTime("1990-01-01")
-$reader['balance']->toFloat()->getValue(); // returns 999.99
-$reader['isActive']->toBool()->getValue(); // returns true
+$mixed['id']->toInt()->getValue(); // returns 99
+$mixed['name']->toString()->getValue(); // returns "Mary"
+$mixed['birthdate']->toDateTime()->getValue(); // returns DateTime("1990-01-01")
+$mixed['balance']->toFloat()->getValue(); // returns 999.99
+$mixed['isActive']->toBool()->getValue(); // returns true
 
-$reader['array_data']->toString()->getValue(); // throws UnexpectedValueException
+$mixed['array_data']->toString()->getValue(); // throws UnexpectedValueException
 ```
 
 ## Processing array elements
 
 ```php
-$reader = new ArrayReader([
+$mixed = new MixedValue([
     'mixed_arr' => [1, 2, '3', 4, 5],
 ]);
 
-$reader['mixed_arr']
-    ->map(fn(ArrayReader $el) => $el->toInt()->getValue())
+$mixed['mixed_arr']
+    ->map(fn(MixedValue $el) => $el->toInt()->getValue())
     ->getValue(); // returns [1, 2, 3, 4, 5]
 ```
 
@@ -92,10 +92,10 @@ class StripSpacesProcessor implements ValueProcessorInterface
     }
 }
 
-$reader = new ArrayReader([
+$mixed = new MixedValue([
     'bad_float' => '9 999.99',
 ]);
-$reader->registerValueProcessor('stripSpaces', new StripSpacesProcessor());
+$mixed->registerValueProcessor('stripSpaces', new StripSpacesProcessor());
 
-$reader['bad_float']->stripSpaces()->toFloat()->getValue(); // return 9999.99
+$mixed['bad_float']->stripSpaces()->toFloat()->getValue(); // return 9999.99
 ```

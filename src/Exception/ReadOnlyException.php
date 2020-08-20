@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Exception;
+namespace Aveiv\MixedValue\Exception;
 
-use Aveiv\ArrayReader\ArrayReader;
+use Aveiv\MixedValue\MixedValue;
 
 final class ReadOnlyException extends \RuntimeException implements ExceptionInterface
 {
     public function __construct()
     {
-        $msg = sprintf('%s is readonly', ArrayReader::class);
+        $msg = sprintf('%s is readonly', MixedValue::class);
         parent::__construct($msg);
     }
 }

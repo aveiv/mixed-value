@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader;
+namespace Aveiv\MixedValue;
 
-use Aveiv\ArrayReader\ValueProcessor\ToBoolProcessor;
-use Aveiv\ArrayReader\ValueProcessor\ValueProcessorInterface;
-use Aveiv\ArrayReader\ValueProcessor\ToDateTimeProcessor;
-use Aveiv\ArrayReader\ValueProcessor\ToFloatProcessor;
-use Aveiv\ArrayReader\ValueProcessor\ToIntProcessor;
-use Aveiv\ArrayReader\ValueProcessor\IsArrayProcessor;
-use Aveiv\ArrayReader\ValueProcessor\IsBoolProcessor;
-use Aveiv\ArrayReader\ValueProcessor\IsFloatProcessor;
-use Aveiv\ArrayReader\ValueProcessor\IsIntProcessor;
-use Aveiv\ArrayReader\ValueProcessor\IsStringProcessor;
-use Aveiv\ArrayReader\ValueProcessor\ToStringProcessor;
-use Aveiv\ArrayReader\Exception\MissingValueException;
-use Aveiv\ArrayReader\Exception\ReadOnlyException;
-use Aveiv\ArrayReader\Exception\UndefinedMethodException;
-use Aveiv\ArrayReader\Exception\UnexpectedOffsetTypeException;
-use Aveiv\ArrayReader\Exception\UnexpectedValueException;
+use Aveiv\MixedValue\ValueProcessor\ToBoolProcessor;
+use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
+use Aveiv\MixedValue\ValueProcessor\ToDateTimeProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToFloatProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToIntProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsArrayProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsBoolProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsFloatProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsIntProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsStringProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToStringProcessor;
+use Aveiv\MixedValue\Exception\MissingValueException;
+use Aveiv\MixedValue\Exception\ReadOnlyException;
+use Aveiv\MixedValue\Exception\UndefinedMethodException;
+use Aveiv\MixedValue\Exception\UnexpectedOffsetTypeException;
+use Aveiv\MixedValue\Exception\UnexpectedValueException;
 
 /**
  * @psalm-template TValue
  */
-final class ArrayReader implements \ArrayAccess
+final class MixedValue implements \ArrayAccess
 {
     /**
      * @psalm-var TValue
@@ -183,8 +183,8 @@ final class ArrayReader implements \ArrayAccess
         if ($this->hasValue()) {
             $arr = $this->isArray()->getValue();
             $arr = array_map(function ($k, $v) use ($cb) {
-                $vReader = $this->newStatic($v, strval($k));
-                return $cb($vReader);
+                $vMixed = $this->newStatic($v, strval($k));
+                return $cb($vMixed);
             }, array_keys($arr), $arr);
             return $this->newStatic($arr);
         } else {
@@ -314,12 +314,12 @@ final class ArrayReader implements \ArrayAccess
      */
     private function newStatic($value, ?string $addPath = null): self
     {
-        $reader = new static($value);
-        $reader->path = $this->path;
+        $mixed = new static($value);
+        $mixed->path = $this->path;
         if ($addPath) {
-            $reader->path[] = $addPath;
+            $mixed->path[] = $addPath;
         }
-        $reader->valueProcessors = $this->valueProcessors;
-        return $reader;
+        $mixed->valueProcessors = $this->valueProcessors;
+        return $mixed;
     }
 }

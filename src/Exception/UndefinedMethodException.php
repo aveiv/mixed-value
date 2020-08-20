@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aveiv\ArrayReader\Exception;
+namespace Aveiv\MixedValue\Exception;
 
 final class UndefinedMethodException extends \RuntimeException implements ExceptionInterface
 {
