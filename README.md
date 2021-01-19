@@ -30,6 +30,7 @@ $mixed = new MixedValue([
     'bool_val' => true,
     'float_val' => 1.0,
     'int_val' => 1,
+    'numeric_val' => '99.99',
     'str_val' => 'string',
 ]);
 
@@ -37,6 +38,7 @@ $mixed['array_val']->isArray()->getValue(); // returns []
 $mixed['bool_val']->isBool()->getValue(); // returns true
 $mixed['float_val']->isFloat()->getValue(); // returns 1.0
 $mixed['int_val']->isInt()->getValue(); // returns 1
+$mixed['numeric_val']->isNumeric()->getValue(); // returns '99.99'
 $mixed['str_val']->isString()->getValue(); // returns "string"
 
 $mixed['str_val']->isInt()->getValue(); // throws UnexpectedValueException
