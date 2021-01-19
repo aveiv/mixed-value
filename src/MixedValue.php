@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Aveiv\MixedValue;
 
-use Aveiv\MixedValue\ValueProcessor\ToBoolProcessor;
-use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
-use Aveiv\MixedValue\ValueProcessor\ToDateTimeProcessor;
-use Aveiv\MixedValue\ValueProcessor\ToFloatProcessor;
-use Aveiv\MixedValue\ValueProcessor\ToIntProcessor;
-use Aveiv\MixedValue\ValueProcessor\IsArrayProcessor;
-use Aveiv\MixedValue\ValueProcessor\IsBoolProcessor;
-use Aveiv\MixedValue\ValueProcessor\IsFloatProcessor;
-use Aveiv\MixedValue\ValueProcessor\IsIntProcessor;
-use Aveiv\MixedValue\ValueProcessor\IsStringProcessor;
-use Aveiv\MixedValue\ValueProcessor\ToStringProcessor;
 use Aveiv\MixedValue\Exception\MissingValueException;
 use Aveiv\MixedValue\Exception\ReadOnlyException;
 use Aveiv\MixedValue\Exception\UndefinedMethodException;
 use Aveiv\MixedValue\Exception\UnexpectedOffsetTypeException;
 use Aveiv\MixedValue\Exception\UnexpectedValueException;
+use Aveiv\MixedValue\ValueProcessor\IsArrayProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsBoolProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsFloatProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsIntProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsNumericProcessor;
+use Aveiv\MixedValue\ValueProcessor\IsStringProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToBoolProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToDateTimeProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToFloatProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToIntProcessor;
+use Aveiv\MixedValue\ValueProcessor\ToStringProcessor;
+use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
 
 /**
  * @psalm-template TValue
@@ -56,6 +57,7 @@ final class MixedValue implements \ArrayAccess
         $this->registerValueProcessor('isBool', new IsBoolProcessor());
         $this->registerValueProcessor('isFloat', new IsFloatProcessor());
         $this->registerValueProcessor('isInt', new IsIntProcessor());
+        $this->registerValueProcessor('isNumeric', new IsNumericProcessor());
         $this->registerValueProcessor('isString', new IsStringProcessor());
 
         $this->registerValueProcessor('toBool', new ToBoolProcessor());
@@ -108,6 +110,16 @@ final class MixedValue implements \ArrayAccess
     public function isInt(): self
     {
         return $this->to('isInt');
+    }
+
+    /**
+     * @psalm-return self<numeric>
+     *
+     * @return self
+     */
+    public function isNumeric(): self
+    {
+        return $this->to('isNumeric');
     }
 
     /**

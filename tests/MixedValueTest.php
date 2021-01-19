@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aveiv\MixedValue\Tests;
 
-use Aveiv\MixedValue\MixedValue;
-use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
 use Aveiv\MixedValue\Exception\MissingValueException;
 use Aveiv\MixedValue\Exception\ReadOnlyException;
 use Aveiv\MixedValue\Exception\UndefinedMethodException;
 use Aveiv\MixedValue\Exception\UnexpectedOffsetTypeException;
 use Aveiv\MixedValue\Exception\UnexpectedValueException;
+use Aveiv\MixedValue\MixedValue;
+use Aveiv\MixedValue\ValueProcessor\ValueProcessorInterface;
 use PHPUnit\Framework\TestCase;
 
 class MixedValueTest extends TestCase
@@ -73,6 +73,35 @@ class MixedValueTest extends TestCase
 
         $mixed = new MixedValue($value = 'not_int');
         $mixed->isInt();
+    }
+
+    public function provideNumericValues(): array
+    {
+        return [
+            [99],
+            [99.99],
+            ['99.99'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideNumericValues
+     *
+     * @param mixed $value
+     */
+    public function testIsNumeric_Numeric_ReturnsSame($value): void
+    {
+        $mixed = new MixedValue($value);
+        $this->assertSame($value, $mixed->isNumeric()->getValue());
+    }
+
+    public function testIsNumeric_NotNumeric_ThrowsUnexpectedValueException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Cannot process value: "Value must be numeric"');
+
+        $mixed = new MixedValue('not_numeric');
+        $mixed->isNumeric();
     }
 
     public function testIsString_String_ReturnsSame(): void

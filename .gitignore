@@ -2,6 +2,7 @@
 /build/
 /composer.lock
 /infection.json
+/.phpunit.result.cache
 /phpunit.xml
 /psalm.xml
 /vendor/
