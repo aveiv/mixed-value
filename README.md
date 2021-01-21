@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/aveiv/mixed-value.svg?branch=master)](https://travis-ci.com/aveiv/mixed-value) [![Latest Stable Version](https://poser.pugx.org/aveiv/mixed-value/v)](//packagist.org/packages/aveiv/mixed-value) [![Total Downloads](https://poser.pugx.org/aveiv/mixed-value/downloads)](//packagist.org/packages/aveiv/mixed-value) [![License](https://poser.pugx.org/aveiv/mixed-value/license)](//packagist.org/packages/aveiv/mixed-value)
+
 MixedValue provides easy array access and the ability to convert/cast values.
 
 ## Installation
