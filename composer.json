@@ -12,11 +12,11 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "infection/infection": "^0.16",
+        "infection/infection": "^0.20",
         "phpunit/phpunit": "^9.2",
         "vimeo/psalm": "^3.11"
     },
