@@ -243,7 +243,7 @@ final class MixedValue implements \ArrayAccess
         return $this->newStatic($value);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $offset = $this->prepareOffset($offset);
         return is_array($this->value) && isset($this->value[$offset]);
@@ -264,12 +264,12 @@ final class MixedValue implements \ArrayAccess
         return $this->newStatic($value, $offset);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new ReadOnlyException();
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new ReadOnlyException();
     }
