@@ -62,6 +62,7 @@ final class MixedValue implements \ArrayAccess
 
         $this->registerValueProcessor('toBool', new ToBoolProcessor());
         $this->registerValueProcessor('toDateTime', new ToDateTimeProcessor());
+        $this->registerValueProcessor('toDateTimeImmutable', new ToDateTimeProcessor(true));
         $this->registerValueProcessor('toFloat', new ToFloatProcessor());
         $this->registerValueProcessor('toInt', new ToIntProcessor());
         $this->registerValueProcessor('toString', new ToStringProcessor());
@@ -150,6 +151,16 @@ final class MixedValue implements \ArrayAccess
     public function toDateTime(): self
     {
         return $this->to('toDateTime');
+    }
+
+    /**
+     * @psalm-return self<\DateTimeImmutable>
+     *
+     * @return self
+     */
+    public function toDateTimeImmutable(): self
+    {
+        return $this->to('toDateTimeImmutable');
     }
 
     /**

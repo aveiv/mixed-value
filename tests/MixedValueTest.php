@@ -150,34 +150,62 @@ class MixedValueTest extends TestCase
         $this->assertSame($result, $mixed->toBool()->findValue());
     }
 
-    public function testToDateTime_DateTimeString_ReturnsEqualDateTime(): void
+    public function provideIsDateTimeImmutable(): array
+    {
+        return [[false], [true]];
+    }
+
+    /**
+     * @dataProvider provideIsDateTimeImmutable
+     */
+    public function testToDateTime_DateTimeString_ReturnsEqualDateTime(bool $immutable): void
     {
         $mixed = new MixedValue($dtStr = '2020-01-01');
-        $dt = date_create($dtStr);
+        $mixedDt = ($immutable ? $mixed->toDateTimeImmutable() : $mixed->toDateTime());
 
-        $this->assertInstanceOf(\DateTime::class, $actValue = $mixed->toDateTime()->getValue());
+        $dt = $immutable ? date_create_immutable($dtStr) : date_create($dtStr);
+
+        $dtCls = $immutable ? \DateTimeImmutable::class : \DateTime::class;
+
+        $this->assertInstanceOf($dtCls, $actValue = $mixedDt->getValue());
         $this->assertEquals($dt, $actValue);
 
-        $this->assertInstanceOf(\DateTime::class, $actValue = $mixed->toDateTime()->findValue());
+        $this->assertInstanceOf($dtCls, $actValue = $mixedDt->findValue());
         $this->assertEquals($dt, $actValue);
     }
 
-    public function testToDateTime_NotString_ThrowsUnexpectedValueException(): void
+    /**
+     * @dataProvider provideIsDateTimeImmutable
+     */
+    public function testToDateTime_NotString_ThrowsUnexpectedValueException(bool $immutable): void
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Value must be a string"');
 
         $mixed = new MixedValue(9999);
-        $mixed->toDateTime();
+
+        if ($immutable) {
+            $mixed->toDateTimeImmutable();
+        } else {
+            $mixed->toDateTime();
+        }
     }
 
-    public function testToDateTime_NotDateTimeString_ThrowsUnexpectedValueException(): void
+    /**
+     * @dataProvider provideIsDateTimeImmutable
+     */
+    public function testToDateTime_NotDateTimeString_ThrowsUnexpectedValueException(bool $immutable): void
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Cannot process value: "Failed to parse datetime string"');
 
         $mixed = new MixedValue('not_datetime_string');
-        $mixed->toDateTime();
+
+        if ($immutable) {
+            $mixed->toDateTimeImmutable();
+        } else {
+            $mixed->toDateTime();
+        }
     }
 
     public function provideCastableFloats(): array
@@ -403,7 +431,6 @@ class MixedValueTest extends TestCase
         $this->expectException(UnexpectedOffsetTypeException::class);
 
         $mixed = new MixedValue([]);
-        /** @noinspection PhpExpressionResultUnusedInspection */
         isset($mixed[$invalidOffset]);
     }
 
