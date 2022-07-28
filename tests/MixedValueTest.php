@@ -490,6 +490,25 @@ class MixedValueTest extends TestCase
         unset($mixed[$k]);
     }
 
+    public function testPath_ExistingOffset_ReturnsMixedValueWithValidValue(): void
+    {
+        $mixedValue = new MixedValue([
+            'path' => [
+                'to' => ($value = 'value'),
+            ],
+        ]);
+        $this->assertSame($value, $mixedValue->path('path.to')->getValue());
+    }
+
+    public function testPath_NonExistingOffset_ReturnsMixedValueWithoutValue(): void
+    {
+        $this->expectException(MissingValueException::class);
+        $this->expectExceptionMessage('Value "path.to" does not exists');
+
+        $mixedValue = new MixedValue([]);
+        $mixedValue->path('path.to')->getValue();
+    }
+
     public function testGetValue_ExistingOffset_ReturnsSameValue(): void
     {
         $mixed = new MixedValue([

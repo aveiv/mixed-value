@@ -244,7 +244,7 @@ final class MixedValue implements \ArrayAccess
                 $value = $this->valueProcessors[$processorKey]($this->value);
             } catch (UnexpectedValueException $e) {
                 if ($pathAsStr = $this->pathAsStr()) {
-                    $msg = sprintf('Cannot process value "%s": "%s"', $this->pathAsStr(), $e->getMessage());
+                    $msg = sprintf('Cannot process value "%s": "%s"', $pathAsStr, $e->getMessage());
                 } else {
                     $msg = sprintf('Cannot process value: "%s"', $e->getMessage());
                 }
@@ -295,6 +295,18 @@ final class MixedValue implements \ArrayAccess
             throw new UnexpectedOffsetTypeException();
         }
         return strval($offset);
+    }
+
+    public function path(string $path): self
+    {
+        $path = explode('.', $path);
+
+        $currentValue = $this;
+        foreach ($path as $offset) {
+            $currentValue = $currentValue[$offset];
+        }
+
+        return $currentValue;
     }
 
     /**
